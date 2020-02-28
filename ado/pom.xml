@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>cruiser</groupId>
+    <artifactId>ado</artifactId>
+    <version>1.0</version>
+    <packaging>jar</packaging>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+    
+    <organization>
+        <name>Senac TADS PI3 - 2020 semestre 1</name>
+    </organization>
+    
+    <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+    <dependencies>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.19</version>
+        </dependency>
+    </dependencies>
+    <developers>
+        <developer>
+            <id>RaphaelaWagner</id>
+            <name>Raphaela Wagner</name>
+        </developer>
+        <developer>
+            <id>EduardoOuro</id>
+            <name>Luis Eduardo</name>
+        </developer>
+        <developer>
+            <id>Zeonnatios</id>
+            <name>Matheus Antonio</name>
+        </developer>
+        <developer>
+            <id>GabrielMaxMaia</id>
+            <name>Gabriel Max</name>
+        </developer>
+    </developers>
+</project>
