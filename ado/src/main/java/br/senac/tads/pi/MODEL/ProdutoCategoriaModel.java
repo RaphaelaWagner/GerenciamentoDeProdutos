@@ -7,7 +7,7 @@ package br.senac.tads.pi.MODEL;
 public class ProdutoCategoriaModel {
 
     private int idProduto;
-    private String idCategoria;
+    private int idCategoria;
 
     public ProdutoCategoriaModel() {
     }
@@ -20,11 +20,11 @@ public class ProdutoCategoriaModel {
         this.idProduto = idProduto;
     }
 
-    public String getIdCategoria() {
+    public int getIdCategoria() {
         return idCategoria;
     }
 
-    public void setIdCategoria(String idCategoria) {
+    public void setIdCategoria(int idCategoria) {
         this.idCategoria = idCategoria;
     }
 
