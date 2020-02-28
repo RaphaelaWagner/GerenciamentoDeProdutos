@@ -12,7 +12,7 @@ import javax.swing.JOptionPane;
  */
 public class ProdutoDAO {
 
-    private Connection conn;
+    private final Connection conn;
 
     public ProdutoDAO() {
         conn = ModuloConexao.Conectar();
@@ -89,7 +89,7 @@ public class ProdutoDAO {
         String sql = "DELETE FROM PRODUTO WHERE ID = ?;";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(0, produto.getId());
+            stmt.setInt(1, produto.getId());
             stmt.executeUpdate();
             JOptionPane.showMessageDialog(null, "Excluido com Sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException e) {
