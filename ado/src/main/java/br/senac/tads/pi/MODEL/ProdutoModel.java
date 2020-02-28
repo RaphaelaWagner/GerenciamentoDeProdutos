@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 
 /**
  *
- * @author
+ * @author cruiser
  */
 public class ProdutoModel {
 
@@ -85,12 +85,12 @@ public class ProdutoModel {
         this.qtde = qtde;
     }
 
-    public boolean isDisp() {
+    public boolean getDisponibilidade() {
         return disponibilidade;
     }
 
-    public void setDisp(boolean disp) {
-        this.disponibilidade = disp;
+    public void setDisponibilidade(boolean disponibilidade) {
+        this.disponibilidade = disponibilidade;
     }
 
     public Timestamp getDataCadastro() {

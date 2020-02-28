@@ -1,4 +1,4 @@
-package br.senac.tads.pi.DAO;
+package br.senac.tads.pi.CONNECTION;
 
 import java.sql.*;
 import javax.swing.JOptionPane;

@@ -7,7 +7,7 @@ package br.senac.tads.pi.MODEL;
 
 /**
  *
- * @author maria.imbeserra
+ * @author cruiser
  */
 public class ProdutoCategoriaModel {
 
