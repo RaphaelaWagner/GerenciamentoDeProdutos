@@ -15,4 +15,15 @@ import br.senac.tads.pi.DAO.*;
  */
 public class ProdutoController {
 
+    private static ProdutoController INSTANCE;
+    private String erros;
+
+    public static ProdutoController getProdutoController() {
+        if (INSTANCE != null) {
+            return INSTANCE;
+        } else {
+            return INSTANCE = new ProdutoController();
+        }
+    }
+
 }
