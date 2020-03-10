@@ -62,7 +62,7 @@ public class ProdutoDAO {
             }
             return lista;
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Erro ao Adicionar" + e, "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Erro ao Consultar" + e, "Erro", JOptionPane.ERROR_MESSAGE);
             return null;
         } finally {
             ModuloConexao.CloseConnection(conn);
@@ -82,20 +82,20 @@ public class ProdutoDAO {
             stmt.setBoolean(6, produto.getDisponibilidade());
             stmt.setInt(7, produto.getId());
             stmt.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Adicionado com Sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Alterado com Sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Erro ao Adicionar" + e, "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Erro ao alterar" + e, "Erro", JOptionPane.ERROR_MESSAGE);
         } finally {
             ModuloConexao.CloseConnection(conn);
         }
     }
 
-    public void Excluir(int ID) throws SQLException {
+    public void Excluir(ProdutoModel produto) throws SQLException {
         Connection conn = ModuloConexao.Conectar();
         String sql = "DELETE FROM PRODUTO WHERE ID = ?;";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, ID);
+            stmt.setInt(1, produto.getId());
             stmt.executeUpdate();
             JOptionPane.showMessageDialog(null, "Excluido com Sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException e) {

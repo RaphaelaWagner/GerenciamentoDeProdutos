@@ -85,7 +85,7 @@ public class MainView extends javax.swing.JFrame {
 
     }
 
-    private ProdutoModel preencheProduto(ProdutoModel produto) {
+    private ProdutoModel inserirDados(ProdutoModel produto) {
 
         if (validarFormulario()) {
             produto.setNome(txtNome.getText());
@@ -109,6 +109,37 @@ public class MainView extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Campos Obrigatorios não preenchidos");
             return null;
         }
+    }
+
+    private ProdutoModel alterarDados(ProdutoModel produto) {
+
+        if (validarFormulario()) {
+            produto.setNome(txtNome.getText());
+            produto.setDesc(txtDesc.getText());
+            produto.setPrecoCompra(Double.parseDouble(txtPrecoVenda.getText()));
+            produto.setPrecoVenda(Double.parseDouble(txtPrecoCompra.getText()));
+            produto.setQtde(Integer.parseInt(txtQtde.getText()));
+            boolean botao = true;
+            if (rbdSIm.isSelected()) {
+                botao = true;
+            }
+            if (rbdNao.isSelected()) {
+                botao = false;
+            }
+            produto.setDisponibilidade(botao);
+            produto.setId(Integer.parseInt(lblID.getText()));
+
+            return produto;
+        } else {
+            JOptionPane.showMessageDialog(null, "Campos Obrigatorios não preenchidos");
+            return null;
+        }
+    }
+
+    private ProdutoModel excluirDados(ProdutoModel produto) {
+
+        produto.setId(Integer.parseInt(lblID.getText()));
+        return produto;
 
     }
 
@@ -484,7 +515,7 @@ public class MainView extends javax.swing.JFrame {
 
 //IMPLEMENTANDO SEM CONTROOLER
         try {
-            ProdutoModel produto = preencheProduto(new ProdutoModel());
+            ProdutoModel produto = inserirDados(new ProdutoModel());
             if (produto != null) {
                 produtoDao.Inserir(produto);
                 carregarTabela();
@@ -503,15 +534,25 @@ public class MainView extends javax.swing.JFrame {
     }//GEN-LAST:event_btnNovoMouseClicked
 
     private void btnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarActionPerformed
-        // TODO add your handling code here:
+        try {
+            ProdutoModel produto = alterarDados(new ProdutoModel());
+            produtoDao.Alterar(produto);
+            carregarTabela();
+            limpaCampos();
+
+        } catch (SQLException ex) {
+            carregarTabela();
+            limpaCampos();
+            JOptionPane.showMessageDialog(null, "Erro: " + ex);
+        }
     }//GEN-LAST:event_btnAlterarActionPerformed
 
     private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
         String str = lblID.toString();
         int ID = Integer.parseInt(str);
         try {
-            ProdutoModel produto = (new ProdutoModel());
-            produtoDao.Excluir(ID);
+            ProdutoModel produto = excluirDados(new ProdutoModel());
+            produtoDao.Excluir(produto);
             carregarTabela();
             limpaCampos();
 
