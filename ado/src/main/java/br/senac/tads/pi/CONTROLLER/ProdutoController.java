@@ -6,36 +6,55 @@
 package br.senac.tads.pi.CONTROLLER;
 
 import java.util.ArrayList;
-import br.senac.tads.pi.MODEL.*;
-import br.senac.tads.pi.DAO.*;
+import br.senac.tads.pi.MODEL.ProdutoModel;
+import br.senac.tads.pi.DAO.ProdutoDAO;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 /**
  *
  * @author Cruiser
  */
 public class ProdutoController {
-    ProdutoDAO daoProdutos = new ProdutoDAO();
 
-    public void inserir( ProdutoModel produto) throws SQLException{
-         this.daoProdutos.Inserir(produto);
+    private static ProdutoController INSTANCE;
+    private String erros;
+
+    public static ProdutoController getProdutoController() {
+        if (INSTANCE != null) {
+            return INSTANCE;
+        } else {
+            return INSTANCE = new ProdutoController();
+        }
     }
-  public void  excluirProdutoController(ProdutoModel produto) throws SQLException{
-         this.daoProdutos.Excluir(produto);
-  }  
-  public  void alterarProdutoController(ProdutoModel produto) throws SQLException{
+
+    static ProdutoDAO daoProdutos = new ProdutoDAO();
+
+    public void inserir(ProdutoModel produto) throws SQLException {
+
+        this.daoProdutos.Inserir(produto);
+
+    }
+
+    public void excluirProdutoController(ProdutoModel produto) throws SQLException {
+        this.daoProdutos.Excluir(produto);
+    }
+
+    public void alterarProdutoController(ProdutoModel produto) throws SQLException {
         this.daoProdutos.Alterar(produto);
     }
+
+    public static ArrayList<String[]> consultar() {
+
+        // ProdutoDAO _produto = new ProdutoDAO();
+        ArrayList<ProdutoModel> produtos = daoProdutos.Consultar();
+        ArrayList<String[]> listaProdutos = new ArrayList<>();
+
+        for (int i = 0; i < produtos.size(); i++) {
+            listaProdutos.add(new String[]{String.valueOf(produtos.get(i).getId()), produtos.get(i).getNome(), produtos.get(i).getDesc(), String.valueOf(produtos.get(i).getPrecoCompra()), String.valueOf(produtos.get(i).getPrecoVenda()), String.valueOf(produtos.get(i).getQtde()), String.valueOf(produtos.get(i).getDisponibilidade()), String.valueOf(produtos.get(i).getDataCadastro())});
+
+        }
+        return listaProdutos;
+
+    }
 }
-//    private static ProdutoController INSTANCE;
-//    private String erros;
-//
-//    public static ProdutoController getProdutoController() {
-//        if (INSTANCE != null) {
-//            return INSTANCE;
-//        } else {
-//            return INSTANCE = new ProdutoController();
-//        }
-//    }
-
-

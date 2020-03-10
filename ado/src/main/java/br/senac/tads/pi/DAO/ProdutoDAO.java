@@ -5,6 +5,8 @@ import br.senac.tads.pi.CONNECTION.ModuloConexao;
 import br.senac.tads.pi.MODEL.ProdutoModel;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  *
@@ -12,16 +14,17 @@ import javax.swing.JOptionPane;
  */
 public class ProdutoDAO {
 
-    private final Connection conn;
-
+    //  private final Connection conn;
     public ProdutoDAO() {
-        conn = ModuloConexao.Conectar();
+        //   conn = ModuloConexao.Conectar();
     }
 
     public void Inserir(ProdutoModel produto) throws SQLException {
-        String sql = "INSERT INTO PRODUTO(NOME,DESCRICAO,PRECO_COMPRA,"
+        Connection conn = ModuloConexao.Conectar();
+        String sql = "INSERT INTO PRODUTO(NOME, DESCRICAO, PRECO_COMPRA,"
                 + "PRECO_VENDA,QUANTIDADE,DISPONIVEL,DT_CADASTRO)"
                 + "VALUES (?,?,?,?,?,?,?);";
+
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, produto.getNome());
             stmt.setString(2, produto.getDesc());
@@ -39,7 +42,8 @@ public class ProdutoDAO {
         }
     }
 
-    public ArrayList<ProdutoModel> Consultar() throws SQLException {
+    public ArrayList<ProdutoModel> Consultar() {
+        Connection conn = ModuloConexao.Conectar();
         String sql = "SELECT * FROM PRODUTO;";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
@@ -66,6 +70,7 @@ public class ProdutoDAO {
     }
 
     public void Alterar(ProdutoModel produto) throws SQLException {
+        Connection conn = ModuloConexao.Conectar();
         String sql = "UPDATE PRODUTO SET NOME = ?, DESCRICAO = ?, PRECO_COMPRA = ?,"
                 + "PRECO_VENDA = ?,QUANTIDADE = ?,DISPONIVEL = ? WHERE ID = ?;";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -85,11 +90,12 @@ public class ProdutoDAO {
         }
     }
 
-    public void Excluir(ProdutoModel produto) throws SQLException {
+    public void Excluir(int ID) throws SQLException {
+        Connection conn = ModuloConexao.Conectar();
         String sql = "DELETE FROM PRODUTO WHERE ID = ?;";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, produto.getId());
+            stmt.setInt(1, ID);
             stmt.executeUpdate();
             JOptionPane.showMessageDialog(null, "Excluido com Sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException e) {

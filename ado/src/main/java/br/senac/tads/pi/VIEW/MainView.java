@@ -5,7 +5,16 @@
  */
 package br.senac.tads.pi.VIEW;
 
+import br.senac.tads.pi.CONTROLLER.ProdutoController;
+import br.senac.tads.pi.MODEL.ProdutoModel;
+import br.senac.tads.pi.DAO.ProdutoDAO;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -18,23 +27,89 @@ public class MainView extends javax.swing.JFrame {
     /**
      * Creates new form Gerenciamento_Produtos_View
      */
+    private final ProdutoDAO produtoDao = new ProdutoDAO();
+
     public MainView() {
         initComponents();
         setLocationRelativeTo(null);
         this.setResizable(false);
+        setTitle("Gerenciador de Produtos");
+        limpaCampos();
+        carregarTabela();
     }
 
+    //Limpar campos
     public void limpaCampos() {
         this.txtNome.setText("");
         this.txtDesc.setText("");
-        this.txtFormCompra.setText("");
-        this.txtFormVenda.setText("");
-        this.txtFormQtd.setText("");
+        this.txtPrecoCompra.setText("");
+        this.txtPrecoVenda.setText("");
+        this.txtQtde.setText("");
+        this.btnGroupDisponibilidade.clearSelection();
     }
 
+    //Carregar tabela de produtos automaticamente ao abrir software
     public void carregarTabela() {
 
-        //ArrayList<String[]> linhas
+        ArrayList<String[]> linhasRegistro = ProdutoController.consultar();
+
+        DefaultTableModel tmProdutos = new DefaultTableModel();
+        tmProdutos.addColumn("Código");
+        tmProdutos.addColumn("Nome");
+        tmProdutos.addColumn("Descrição");
+        tmProdutos.addColumn("Preço de Compra");
+        tmProdutos.addColumn("Preço de Venda");
+        tmProdutos.addColumn("Quantidade");
+        tmProdutos.addColumn("Disponibilidade");
+        tmProdutos.addColumn("Data");
+
+        tblDados.setModel(tmProdutos);
+
+        for (String[] c : linhasRegistro) {
+            tmProdutos.addRow(c);
+        }
+
+    }
+
+    public boolean validarFormulario() {
+        if (txtNome.getText().isEmpty()
+                && txtDesc.getText().isEmpty()
+                && txtPrecoCompra.getText().isEmpty()
+                && txtPrecoVenda.getText().isEmpty()
+                && txtQtde.getText().isEmpty()) {
+            return false;
+
+        } else {
+            return true;
+        }
+
+    }
+
+    private ProdutoModel preencheProduto(ProdutoModel produto) {
+
+        if (validarFormulario()) {
+            produto.setNome(txtNome.getText());
+            produto.setDesc(txtDesc.getText());
+            produto.setPrecoCompra(Double.parseDouble(txtPrecoVenda.getText()));
+            produto.setPrecoVenda(Double.parseDouble(txtPrecoCompra.getText()));
+            produto.setQtde(Integer.parseInt(txtQtde.getText()));
+            boolean botao = true;
+            if (rbdSIm.isSelected()) {
+                botao = true;
+            }
+            if (rbdNao.isSelected()) {
+                botao = false;
+            }
+            produto.setDisponibilidade(botao);
+            Timestamp data = new Timestamp(System.currentTimeMillis());
+            produto.setDataCadastro(data);
+
+            return produto;
+        } else {
+            JOptionPane.showMessageDialog(null, "Campos Obrigatorios não preenchidos");
+            return null;
+        }
+
     }
 
     /**
@@ -59,24 +134,25 @@ public class MainView extends javax.swing.JFrame {
         lblDisponibilidade = new javax.swing.JLabel();
         rbdSIm = new javax.swing.JRadioButton();
         rbdNao = new javax.swing.JRadioButton();
-        txtFormCompra = new javax.swing.JFormattedTextField();
-        txtFormVenda = new javax.swing.JFormattedTextField();
-        txtFormQtd = new javax.swing.JFormattedTextField();
-        jCheckBox1 = new javax.swing.JCheckBox();
-        jCheckBox2 = new javax.swing.JCheckBox();
-        jCheckBox3 = new javax.swing.JCheckBox();
-        jCheckBox4 = new javax.swing.JCheckBox();
-        jCheckBox5 = new javax.swing.JCheckBox();
-        lblDisponibilidade1 = new javax.swing.JLabel();
+        ckbCategoria1 = new javax.swing.JCheckBox();
+        ckbCategoria2 = new javax.swing.JCheckBox();
+        ckbCategoria3 = new javax.swing.JCheckBox();
+        ckbCategoria4 = new javax.swing.JCheckBox();
+        ckbCategoria5 = new javax.swing.JCheckBox();
+        lblCategoria = new javax.swing.JLabel();
+        txtPrecoCompra = new javax.swing.JTextField();
+        txtPrecoVenda = new javax.swing.JTextField();
+        txtQtde = new javax.swing.JTextField();
+        lblID = new javax.swing.JLabel();
         btnNovo = new javax.swing.JButton();
         btnAlterar = new javax.swing.JButton();
         btnExcluir = new javax.swing.JButton();
         btnConsultar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblDados = new javax.swing.JTable();
-        jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        pnlTitle = new javax.swing.JPanel();
+        lblTitle = new javax.swing.JLabel();
+        btnPesquisaID = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Gerenciador de Produtos");
@@ -130,46 +206,40 @@ public class MainView extends javax.swing.JFrame {
         rbdNao.setForeground(new java.awt.Color(255, 255, 255));
         rbdNao.setText("NÃO");
 
-        txtFormCompra.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getCurrencyInstance())));
-        txtFormCompra.addActionListener(new java.awt.event.ActionListener() {
+        ckbCategoria1.setText("1");
+
+        ckbCategoria2.setText("2");
+        ckbCategoria2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtFormCompraActionPerformed(evt);
+                ckbCategoria2ActionPerformed(evt);
             }
         });
 
-        txtFormVenda.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getCurrencyInstance())));
-
-        txtFormQtd.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
-        txtFormQtd.addActionListener(new java.awt.event.ActionListener() {
+        ckbCategoria3.setText("3");
+        ckbCategoria3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtFormQtdActionPerformed(evt);
+                ckbCategoria3ActionPerformed(evt);
             }
         });
 
-        jCheckBox1.setText("1");
+        ckbCategoria4.setText("4");
 
-        jCheckBox2.setText("2");
-        jCheckBox2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox2ActionPerformed(evt);
-            }
-        });
+        ckbCategoria5.setText("5");
 
-        jCheckBox3.setText("3");
-        jCheckBox3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox3ActionPerformed(evt);
-            }
-        });
+        lblCategoria.setFont(new java.awt.Font("Kalinga", 1, 12)); // NOI18N
+        lblCategoria.setForeground(new java.awt.Color(240, 240, 240));
+        lblCategoria.setText("Categoria:");
+        lblCategoria.setAlignmentX(0.5F);
 
-        jCheckBox4.setText("4");
+        txtPrecoCompra.setToolTipText("Descrição detalhada do produto");
 
-        jCheckBox5.setText("5");
+        txtPrecoVenda.setToolTipText("Descrição detalhada do produto");
 
-        lblDisponibilidade1.setFont(new java.awt.Font("Kalinga", 1, 12)); // NOI18N
-        lblDisponibilidade1.setForeground(new java.awt.Color(240, 240, 240));
-        lblDisponibilidade1.setText("Categoria:");
-        lblDisponibilidade1.setAlignmentX(0.5F);
+        txtQtde.setToolTipText("Descrição detalhada do produto");
+
+        lblID.setFont(new java.awt.Font("Kalinga", 1, 12)); // NOI18N
+        lblID.setForeground(new java.awt.Color(240, 240, 240));
+        lblID.setAlignmentX(0.5F);
 
         javax.swing.GroupLayout pnlDadosLayout = new javax.swing.GroupLayout(pnlDados);
         pnlDados.setLayout(pnlDadosLayout);
@@ -190,23 +260,25 @@ public class MainView extends javax.swing.JFrame {
                         .addComponent(rbdSIm)
                         .addGap(18, 18, 18)
                         .addComponent(rbdNao)
+                        .addGap(46, 46, 46)
+                        .addComponent(lblID)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(lblDisponibilidade1)
+                        .addComponent(lblCategoria)
                         .addGap(18, 18, 18)
-                        .addComponent(jCheckBox1)
+                        .addComponent(ckbCategoria1)
                         .addGap(18, 18, 18)
-                        .addComponent(jCheckBox2)
+                        .addComponent(ckbCategoria2)
                         .addGap(18, 18, 18)
-                        .addComponent(jCheckBox3)
+                        .addComponent(ckbCategoria3)
                         .addGap(18, 18, 18)
-                        .addComponent(jCheckBox4)
+                        .addComponent(ckbCategoria4)
                         .addGap(15, 15, 15)
-                        .addComponent(jCheckBox5))
-                    .addComponent(txtFormQtd)
-                    .addComponent(txtFormVenda)
-                    .addComponent(txtFormCompra)
+                        .addComponent(ckbCategoria5))
                     .addComponent(txtDesc)
-                    .addComponent(txtNome, javax.swing.GroupLayout.DEFAULT_SIZE, 534, Short.MAX_VALUE))
+                    .addComponent(txtNome, javax.swing.GroupLayout.DEFAULT_SIZE, 534, Short.MAX_VALUE)
+                    .addComponent(txtPrecoCompra)
+                    .addComponent(txtPrecoVenda)
+                    .addComponent(txtQtde))
                 .addGap(20, 20, 20))
         );
         pnlDadosLayout.setVerticalGroup(
@@ -214,39 +286,37 @@ public class MainView extends javax.swing.JFrame {
             .addGroup(pnlDadosLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlDadosLayout.createSequentialGroup()
-                        .addGroup(pnlDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblNome, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE))
-                        .addGap(20, 20, 20)
-                        .addGroup(pnlDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                            .addComponent(lblDesc, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE)
-                            .addComponent(txtDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(20, 20, 20)
-                        .addComponent(lblPrecoCompra, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE))
-                    .addGroup(pnlDadosLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(txtFormCompra, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblNome, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE))
+                .addGap(20, 20, 20)
+                .addGroup(pnlDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(lblDesc, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE)
+                    .addComponent(txtDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(20, 20, 20)
+                .addGroup(pnlDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblPrecoCompra, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE)
+                    .addComponent(txtPrecoCompra, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(20, 20, 20)
                 .addGroup(pnlDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblPrecoVenda, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
-                    .addComponent(txtFormVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtPrecoVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(20, 20, 20)
                 .addGroup(pnlDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblQtde, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
-                    .addComponent(txtFormQtd, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtQtde, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(pnlDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblDisponibilidade, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
                     .addComponent(rbdSIm)
                     .addComponent(rbdNao)
-                    .addComponent(jCheckBox1)
-                    .addComponent(jCheckBox2)
-                    .addComponent(jCheckBox3)
-                    .addComponent(jCheckBox4)
-                    .addComponent(jCheckBox5)
-                    .addComponent(lblDisponibilidade1))
-                .addGap(22, 22, 22))
+                    .addComponent(ckbCategoria1)
+                    .addComponent(ckbCategoria2)
+                    .addComponent(ckbCategoria3)
+                    .addComponent(ckbCategoria4)
+                    .addComponent(ckbCategoria5)
+                    .addComponent(lblCategoria)
+                    .addComponent(lblID, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE))
+                .addGap(20, 20, 20))
         );
 
         btnNovo.setBackground(new java.awt.Color(255, 255, 255));
@@ -298,38 +368,43 @@ public class MainView extends javax.swing.JFrame {
 
             }
         ));
+        tblDados.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblDadosMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblDados);
 
-        jPanel1.setBackground(new java.awt.Color(102, 0, 102));
+        pnlTitle.setBackground(new java.awt.Color(102, 0, 102));
 
-        jLabel1.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel1.setFont(new java.awt.Font("Kalinga", 1, 18)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("Gerenciamento de Estoque");
+        lblTitle.setBackground(new java.awt.Color(255, 255, 255));
+        lblTitle.setFont(new java.awt.Font("Kalinga", 1, 18)); // NOI18N
+        lblTitle.setForeground(new java.awt.Color(255, 255, 255));
+        lblTitle.setText("Gerenciamento de Estoque");
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout pnlTitleLayout = new javax.swing.GroupLayout(pnlTitle);
+        pnlTitle.setLayout(pnlTitleLayout);
+        pnlTitleLayout.setHorizontalGroup(
+            pnlTitleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlTitleLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addComponent(lblTitle)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+        pnlTitleLayout.setVerticalGroup(
+            pnlTitleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlTitleLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
+                .addComponent(lblTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        jButton1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(255, 51, 0));
-        jButton1.setText("Pesquisar por ID");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnPesquisaID.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        btnPesquisaID.setForeground(new java.awt.Color(255, 51, 0));
+        btnPesquisaID.setText("Pesquisar por ID");
+        btnPesquisaID.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnPesquisaIDActionPerformed(evt);
             }
         });
 
@@ -337,32 +412,34 @@ public class MainView extends javax.swing.JFrame {
         pnlBackground.setLayout(pnlBackgroundLayout);
         pnlBackgroundLayout.setHorizontalGroup(
             pnlBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(pnlTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(pnlBackgroundLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlBackgroundLayout.createSequentialGroup()
-                        .addComponent(pnlDados, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1))
-                .addContainerGap())
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlBackgroundLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnNovo, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnAlterar, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnConsultar, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29))
+                        .addGroup(pnlBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(pnlBackgroundLayout.createSequentialGroup()
+                                .addComponent(pnlDados, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(jScrollPane1))
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlBackgroundLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnPesquisaID)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnNovo, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnAlterar, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnConsultar)
+                        .addGap(29, 29, 29))))
         );
         pnlBackgroundLayout.setVerticalGroup(
             pnlBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlBackgroundLayout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(pnlTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(pnlDados, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -371,7 +448,7 @@ public class MainView extends javax.swing.JFrame {
                     .addComponent(btnExcluir)
                     .addComponent(btnAlterar)
                     .addComponent(btnNovo)
-                    .addComponent(jButton1))
+                    .addComponent(btnPesquisaID))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -387,13 +464,37 @@ public class MainView extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(pnlBackground, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 2, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovoActionPerformed
+// FALTA IMPLEMENTAR COM CONTROOLER
+//       // Timestamp data = new Timestamp(System.currentTimeMillis());
+//        ProdutoController.getProdutoController().inserir(
+//                txtNome.getText(),
+//                txtDesc.getText(),
+//                Double.parseDouble(txtFormCompra.getText()),
+//                Double.parseDouble(txtFormVenda.getText()),
+//                Integer.parseInt(txtFormQtd.getText()),
+//                btnGroupDisponibilidade.getSelection().toString(),
+//                data);
+
+//IMPLEMENTANDO SEM CONTROOLER
+        try {
+            ProdutoModel produto = preencheProduto(new ProdutoModel());
+            if (produto != null) {
+                produtoDao.Inserir(produto);
+                carregarTabela();
+                limpaCampos();
+            }
+        } catch (SQLException ex) {
+            carregarTabela();
+            limpaCampos();
+            JOptionPane.showMessageDialog(null, "Erro: " + ex);
+        }
 
     }//GEN-LAST:event_btnNovoActionPerformed
 
@@ -401,33 +502,58 @@ public class MainView extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_btnNovoMouseClicked
 
-    private void txtFormCompraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFormCompraActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtFormCompraActionPerformed
-
-    private void txtFormQtdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFormQtdActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtFormQtdActionPerformed
-
     private void btnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnAlterarActionPerformed
 
     private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
-        // TODO add your handling code here:
+        String str = lblID.toString();
+        int ID = Integer.parseInt(str);
+        try {
+            ProdutoModel produto = (new ProdutoModel());
+            produtoDao.Excluir(ID);
+            carregarTabela();
+            limpaCampos();
+
+        } catch (SQLException ex) {
+            carregarTabela();
+            limpaCampos();
+            JOptionPane.showMessageDialog(null, "Erro: " + ex);
+        }
     }//GEN-LAST:event_btnExcluirActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnPesquisaIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisaIDActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btnPesquisaIDActionPerformed
 
-    private void jCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox2ActionPerformed
+    private void ckbCategoria2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ckbCategoria2ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBox2ActionPerformed
+    }//GEN-LAST:event_ckbCategoria2ActionPerformed
 
-    private void jCheckBox3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox3ActionPerformed
+    private void ckbCategoria3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ckbCategoria3ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBox3ActionPerformed
+    }//GEN-LAST:event_ckbCategoria3ActionPerformed
+
+    private void tblDadosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDadosMouseClicked
+        // evento de clicar na linah da tabela
+        // e as informações ocuparem txtForm
+
+        int linha = tblDados.getSelectedRow();
+        lblID.setText(tblDados.getValueAt(linha, 0).toString());
+        txtNome.setText(tblDados.getValueAt(linha, 1).toString());
+        txtDesc.setText(tblDados.getValueAt(linha, 2).toString());
+        txtPrecoCompra.setText(tblDados.getValueAt(linha, 3).toString());
+        txtPrecoVenda.setText(tblDados.getValueAt(linha, 4).toString());
+        txtQtde.setText(tblDados.getValueAt(linha, 5).toString());
+        boolean disp = Boolean.getBoolean(tblDados.getValueAt(linha, 6).toString());
+        lblID.setVisible(false);
+        if (disp == true) {
+            rbdSIm.isSelected();
+        } else {
+            rbdNao.isSelected();
+        }
+
+    }//GEN-LAST:event_tblDadosMouseClicked
 
     /**
      * @param args the command line arguments
@@ -471,31 +597,32 @@ public class MainView extends javax.swing.JFrame {
     private javax.swing.JButton btnExcluir;
     private javax.swing.ButtonGroup btnGroupDisponibilidade;
     private javax.swing.JButton btnNovo;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JCheckBox jCheckBox2;
-    private javax.swing.JCheckBox jCheckBox3;
-    private javax.swing.JCheckBox jCheckBox4;
-    private javax.swing.JCheckBox jCheckBox5;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JButton btnPesquisaID;
+    private javax.swing.JCheckBox ckbCategoria1;
+    private javax.swing.JCheckBox ckbCategoria2;
+    private javax.swing.JCheckBox ckbCategoria3;
+    private javax.swing.JCheckBox ckbCategoria4;
+    private javax.swing.JCheckBox ckbCategoria5;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblCategoria;
     private javax.swing.JLabel lblDesc;
     private javax.swing.JLabel lblDisponibilidade;
-    private javax.swing.JLabel lblDisponibilidade1;
+    private javax.swing.JLabel lblID;
     private javax.swing.JLabel lblNome;
     private javax.swing.JLabel lblPrecoCompra;
     private javax.swing.JLabel lblPrecoVenda;
     private javax.swing.JLabel lblQtde;
+    private javax.swing.JLabel lblTitle;
     private javax.swing.JPanel pnlBackground;
     private javax.swing.JPanel pnlDados;
+    private javax.swing.JPanel pnlTitle;
     private javax.swing.JRadioButton rbdNao;
     private javax.swing.JRadioButton rbdSIm;
     private javax.swing.JTable tblDados;
     private javax.swing.JTextField txtDesc;
-    private javax.swing.JFormattedTextField txtFormCompra;
-    private javax.swing.JFormattedTextField txtFormQtd;
-    private javax.swing.JFormattedTextField txtFormVenda;
     private javax.swing.JTextField txtNome;
+    private javax.swing.JTextField txtPrecoCompra;
+    private javax.swing.JTextField txtPrecoVenda;
+    private javax.swing.JTextField txtQtde;
     // End of variables declaration//GEN-END:variables
 }

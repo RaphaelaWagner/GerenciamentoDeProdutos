@@ -95,5 +95,4 @@ public class ProdutoModel {
     public void setDataCadastro(Timestamp dataCadastro) {
         this.dataCadastro = dataCadastro;
     }
-
 }
