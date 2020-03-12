@@ -36,8 +36,8 @@ public class ProdutoController {
 
     }
 
-    public void excluirProdutoController(ProdutoModel produto) throws SQLException {
-        this.daoProdutos.Excluir(produto);
+    public void excluirProdutoController(int ID) throws SQLException {
+        this.daoProdutos.Excluir(ID);
     }
 
     public void alterarProdutoController(ProdutoModel produto) throws SQLException {

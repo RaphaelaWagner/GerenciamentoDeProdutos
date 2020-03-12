@@ -90,12 +90,12 @@ public class ProdutoDAO {
         }
     }
 
-    public void Excluir(ProdutoModel produto) throws SQLException {
+    public void Excluir(int id) throws SQLException {
         Connection conn = ModuloConexao.Conectar();
         String sql = "DELETE FROM PRODUTO WHERE ID = ?;";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, produto.getId());
+            stmt.setInt(1, id);
             stmt.executeUpdate();
             JOptionPane.showMessageDialog(null, "Excluido com Sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException e) {

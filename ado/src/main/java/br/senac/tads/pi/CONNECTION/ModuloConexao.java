@@ -8,13 +8,12 @@ import javax.swing.JOptionPane;
  @see CloseConnection() - para a conexão e fecha os comandos de suporte ao sql...
 
  */
-
 public class ModuloConexao {
 
     private static String DRIVER = "com.mysql.cj.jdbc.Driver";
     private static String LOGIN = "root";
     private static String SENHA = "";
-    private static String URL = "jdbc:mysql://localhost:3306/PRODUTOBD?useTimezone=true&serverTimezone=UTC&useSSL=false";
+    private static String URL = "jdbc:mysql://localhost:3307/PRODUTOBD?useTimezone=true&serverTimezone=UTC&useSSL=false";
 
     public static Connection Conectar() {
         java.sql.Connection conexao = null;
