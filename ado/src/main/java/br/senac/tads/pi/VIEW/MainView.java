@@ -7,7 +7,10 @@ package br.senac.tads.pi.VIEW;
 
 import br.senac.tads.pi.CONTROLLER.ProdutoController;
 import br.senac.tads.pi.MODEL.ProdutoModel;
+import br.senac.tads.pi.MODEL.ProdutoCategoriaModel;
+import br.senac.tads.pi.DAO.ProdutoCategoriaDAO;
 import br.senac.tads.pi.DAO.ProdutoDAO;
+import br.senac.tads.pi.MODEL.CategoriaModel;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -24,7 +27,8 @@ public class MainView extends javax.swing.JFrame {
      * Creates new form Gerenciamento_Produtos_View
      */
     private final ProdutoDAO produtoDao = new ProdutoDAO();
-
+    private final ProdutoCategoriaDAO produtoCategoriaDao = new ProdutoCategoriaDAO();
+    
     public MainView() {
         initComponents();
         setLocationRelativeTo(null);
@@ -76,13 +80,30 @@ public class MainView extends javax.swing.JFrame {
                 && txtQtde.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Campos Obrigatorios não preenchidos");
             return false;
-
         } else {
             return true;
         }
-
     }
 
+    
+    
+    public void vincularCategoria(int id) throws SQLException{
+        ProdutoCategoriaModel p = new ProdutoCategoriaModel();
+        
+        p.setIdProduto(id);
+        
+        if (ckbCat1.isSelected()){
+            p.setIdCategoria(1);
+            produtoCategoriaDao.Inserir(p);
+        }
+        
+        if (ckbCat2.isSelected()){
+            p.setIdCategoria(2);
+            produtoCategoriaDao.Inserir(p);
+        }
+    }
+    
+    
     private ProdutoModel inserirDados(ProdutoModel produto) {
 
         if (validarFormulario()) {
@@ -91,24 +112,21 @@ public class MainView extends javax.swing.JFrame {
             produto.setPrecoCompra(Double.parseDouble(txtPrecoCompra.getText()));
             produto.setPrecoVenda(Double.parseDouble(txtPrecoVenda.getText()));
             produto.setQtde(Integer.parseInt(txtQtde.getText()));
+            
             boolean botao = true;
-            if (rbdSim.isSelected()) {
-                botao = true;
-            }
-            if (rbdNao.isSelected()) {
+            if (rbdNao.isSelected())
                 botao = false;
-            }
             produto.setDisponibilidade(botao);
+            
             Timestamp data = new Timestamp(System.currentTimeMillis());
             produto.setDataCadastro(data);
 
             return produto;
         } else {
-
             return null;
         }
     }
-
+    
     private ProdutoModel alterarDados(ProdutoModel produto) {
 
         if (validarFormulario()) {
@@ -118,12 +136,11 @@ public class MainView extends javax.swing.JFrame {
             produto.setPrecoVenda(Double.parseDouble(txtPrecoVenda.getText()));
             produto.setQtde(Integer.parseInt(txtQtde.getText()));
             boolean botao = true;
-            if (rbdSim.isSelected()) {
+            if (rbdSim.isSelected())
                 botao = true;
-            }
-            if (rbdNao.isSelected()) {
+            if (rbdNao.isSelected())
                 botao = false;
-            }
+            
             produto.setDisponibilidade(botao);
             produto.setId(Integer.parseInt(lblID.getText()));
 
@@ -140,7 +157,6 @@ public class MainView extends javax.swing.JFrame {
         int ID = Integer.parseInt(str);
         produto.setId(ID);
         return produto;
-
     }
 
     /**
@@ -166,11 +182,11 @@ public class MainView extends javax.swing.JFrame {
         lblDisponibilidade = new javax.swing.JLabel();
         rbdSim = new javax.swing.JRadioButton();
         rbdNao = new javax.swing.JRadioButton();
-        ckbCategoria1 = new javax.swing.JCheckBox();
-        ckbCategoria2 = new javax.swing.JCheckBox();
-        ckbCategoria3 = new javax.swing.JCheckBox();
-        ckbCategoria4 = new javax.swing.JCheckBox();
-        ckbCategoria5 = new javax.swing.JCheckBox();
+        ckbCat1 = new javax.swing.JCheckBox();
+        ckbCat2 = new javax.swing.JCheckBox();
+        ckbCat3 = new javax.swing.JCheckBox();
+        ckbCat4 = new javax.swing.JCheckBox();
+        ckbCat5 = new javax.swing.JCheckBox();
         lblCategoria = new javax.swing.JLabel();
         txtPrecoCompra = new javax.swing.JTextField();
         txtPrecoVenda = new javax.swing.JTextField();
@@ -179,12 +195,10 @@ public class MainView extends javax.swing.JFrame {
         btnNovo = new javax.swing.JButton();
         btnAlterar = new javax.swing.JButton();
         btnExcluir = new javax.swing.JButton();
-        btnConsultar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblDados = new javax.swing.JTable();
         pnlTitle = new javax.swing.JPanel();
         lblTitle = new javax.swing.JLabel();
-        btnPesquisarId = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Gerenciador de Produtos");
@@ -236,46 +250,51 @@ public class MainView extends javax.swing.JFrame {
         rbdSim.setSelected(true);
         rbdSim.setText("SIM");
         rbdSim.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        rbdSim.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbdSimActionPerformed(evt);
+            }
+        });
 
         btnGroupDisponibilidade.add(rbdNao);
         rbdNao.setForeground(new java.awt.Color(255, 255, 255));
         rbdNao.setText("NÃO");
         rbdNao.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-
-        btnGroupCategoria.add(ckbCategoria1);
-        ckbCategoria1.setForeground(new java.awt.Color(255, 255, 255));
-        ckbCategoria1.setText("1");
-        ckbCategoria1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-
-        btnGroupCategoria.add(ckbCategoria2);
-        ckbCategoria2.setForeground(new java.awt.Color(255, 255, 255));
-        ckbCategoria2.setText("2");
-        ckbCategoria2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        ckbCategoria2.addActionListener(new java.awt.event.ActionListener() {
+        rbdNao.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ckbCategoria2ActionPerformed(evt);
+                rbdNaoActionPerformed(evt);
             }
         });
 
-        btnGroupCategoria.add(ckbCategoria3);
-        ckbCategoria3.setForeground(new java.awt.Color(255, 255, 255));
-        ckbCategoria3.setText("3");
-        ckbCategoria3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        ckbCategoria3.addActionListener(new java.awt.event.ActionListener() {
+        ckbCat1.setForeground(new java.awt.Color(255, 255, 255));
+        ckbCat1.setText("1");
+        ckbCat1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+        ckbCat2.setForeground(new java.awt.Color(255, 255, 255));
+        ckbCat2.setText("2");
+        ckbCat2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        ckbCat2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ckbCategoria3ActionPerformed(evt);
+                ckbCat2ActionPerformed(evt);
             }
         });
 
-        btnGroupCategoria.add(ckbCategoria4);
-        ckbCategoria4.setForeground(new java.awt.Color(255, 255, 255));
-        ckbCategoria4.setText("4");
-        ckbCategoria4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        ckbCat3.setForeground(new java.awt.Color(255, 255, 255));
+        ckbCat3.setText("3");
+        ckbCat3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        ckbCat3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ckbCat3ActionPerformed(evt);
+            }
+        });
 
-        btnGroupCategoria.add(ckbCategoria5);
-        ckbCategoria5.setForeground(new java.awt.Color(255, 255, 255));
-        ckbCategoria5.setText("5");
-        ckbCategoria5.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        ckbCat4.setForeground(new java.awt.Color(255, 255, 255));
+        ckbCat4.setText("4");
+        ckbCat4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+        ckbCat5.setForeground(new java.awt.Color(255, 255, 255));
+        ckbCat5.setText("5");
+        ckbCat5.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         lblCategoria.setFont(new java.awt.Font("Kalinga", 1, 12)); // NOI18N
         lblCategoria.setForeground(new java.awt.Color(240, 240, 240));
@@ -319,15 +338,15 @@ public class MainView extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(lblCategoria)
                         .addGap(18, 18, 18)
-                        .addComponent(ckbCategoria1)
+                        .addComponent(ckbCat1)
                         .addGap(18, 18, 18)
-                        .addComponent(ckbCategoria2)
+                        .addComponent(ckbCat2)
                         .addGap(18, 18, 18)
-                        .addComponent(ckbCategoria3)
+                        .addComponent(ckbCat3)
                         .addGap(18, 18, 18)
-                        .addComponent(ckbCategoria4)
+                        .addComponent(ckbCat4)
                         .addGap(15, 15, 15)
-                        .addComponent(ckbCategoria5))
+                        .addComponent(ckbCat5))
                     .addComponent(txtDesc)
                     .addComponent(txtNome, javax.swing.GroupLayout.DEFAULT_SIZE, 534, Short.MAX_VALUE)
                     .addComponent(txtPrecoCompra)
@@ -363,11 +382,11 @@ public class MainView extends javax.swing.JFrame {
                     .addComponent(lblDisponibilidade, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
                     .addComponent(rbdSim)
                     .addComponent(rbdNao)
-                    .addComponent(ckbCategoria1)
-                    .addComponent(ckbCategoria2)
-                    .addComponent(ckbCategoria3)
-                    .addComponent(ckbCategoria4)
-                    .addComponent(ckbCategoria5)
+                    .addComponent(ckbCat1)
+                    .addComponent(ckbCat2)
+                    .addComponent(ckbCat3)
+                    .addComponent(ckbCat4)
+                    .addComponent(ckbCat5)
                     .addComponent(lblCategoria)
                     .addComponent(lblID, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE))
                 .addGap(20, 20, 20))
@@ -411,13 +430,6 @@ public class MainView extends javax.swing.JFrame {
             }
         });
 
-        btnConsultar.setBackground(new java.awt.Color(255, 255, 255));
-        btnConsultar.setFont(new java.awt.Font("Kalinga", 1, 11)); // NOI18N
-        btnConsultar.setForeground(new java.awt.Color(102, 0, 102));
-        btnConsultar.setText("Consultar");
-        btnConsultar.setAlignmentY(0.0F);
-        btnConsultar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-
         tblDados.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -457,16 +469,6 @@ public class MainView extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        btnPesquisarId.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        btnPesquisarId.setForeground(new java.awt.Color(255, 51, 0));
-        btnPesquisarId.setText("Pesquisar por ID");
-        btnPesquisarId.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnPesquisarId.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnPesquisarIdActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout pnlBackgroundLayout = new javax.swing.GroupLayout(pnlBackground);
         pnlBackground.setLayout(pnlBackgroundLayout);
         pnlBackgroundLayout.setHorizontalGroup(
@@ -476,24 +478,17 @@ public class MainView extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(pnlBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlBackgroundLayout.createSequentialGroup()
-                        .addGroup(pnlBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pnlBackgroundLayout.createSequentialGroup()
-                                .addComponent(pnlDados, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(jScrollPane1))
-                        .addContainerGap())
+                        .addComponent(pnlDados, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlBackgroundLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnPesquisarId)
-                        .addGap(18, 18, 18)
                         .addComponent(btnNovo, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnAlterar, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(btnExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnConsultar)
-                        .addGap(29, 29, 29))))
+                        .addComponent(btnExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         pnlBackgroundLayout.setVerticalGroup(
             pnlBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -503,11 +498,9 @@ public class MainView extends javax.swing.JFrame {
                 .addComponent(pnlDados, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(pnlBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnConsultar)
                     .addComponent(btnExcluir)
                     .addComponent(btnAlterar)
-                    .addComponent(btnNovo)
-                    .addComponent(btnPesquisarId))
+                    .addComponent(btnNovo))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -531,10 +524,11 @@ public class MainView extends javax.swing.JFrame {
 
     private void btnNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovoActionPerformed
 
-//IMPLEMENTANDO SEM CONTROOLER
+//IMPLEMENTANDO SEM CONTROLLER
         try {
             ProdutoModel produto = inserirDados(new ProdutoModel());
             if (produto != null) {
+                vincularCategoria(produto.getId());
                 produtoDao.Inserir(produto);
                 carregarTabela();
                 limpaCampos();
@@ -588,17 +582,13 @@ public class MainView extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnExcluirActionPerformed
 
-    private void btnPesquisarIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarIdActionPerformed
+    private void ckbCat2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ckbCat2ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnPesquisarIdActionPerformed
+    }//GEN-LAST:event_ckbCat2ActionPerformed
 
-    private void ckbCategoria2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ckbCategoria2ActionPerformed
+    private void ckbCat3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ckbCat3ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_ckbCategoria2ActionPerformed
-
-    private void ckbCategoria3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ckbCategoria3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_ckbCategoria3ActionPerformed
+    }//GEN-LAST:event_ckbCat3ActionPerformed
 
     private void tblDadosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDadosMouseClicked
         // evento de clicar na linha da tabela
@@ -611,15 +601,22 @@ public class MainView extends javax.swing.JFrame {
         txtPrecoCompra.setText(tblDados.getValueAt(linha, 3).toString());
         txtPrecoVenda.setText(tblDados.getValueAt(linha, 4).toString());
         txtQtde.setText(tblDados.getValueAt(linha, 5).toString());
-        boolean disp = Boolean.getBoolean(tblDados.getValueAt(linha, 6).toString());
-        lblID.setVisible(true);
-        if (disp == true) {
-            rbdSim.isSelected();
-        } else {
-            rbdNao.isSelected();
-        }
+        lblID.setVisible(false);
+        
+        if (tblDados.getValueAt(linha, 6).toString().equals("true"))
+            rbdSim.setSelected(true);
+        else
+            rbdNao.setSelected(true);
 
     }//GEN-LAST:event_tblDadosMouseClicked
+
+    private void rbdSimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbdSimActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rbdSimActionPerformed
+
+    private void rbdNaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbdNaoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rbdNaoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -659,17 +656,15 @@ public class MainView extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAlterar;
-    private javax.swing.JButton btnConsultar;
     private javax.swing.JButton btnExcluir;
     private javax.swing.ButtonGroup btnGroupCategoria;
     private javax.swing.ButtonGroup btnGroupDisponibilidade;
     private javax.swing.JButton btnNovo;
-    private javax.swing.JButton btnPesquisarId;
-    private javax.swing.JCheckBox ckbCategoria1;
-    private javax.swing.JCheckBox ckbCategoria2;
-    private javax.swing.JCheckBox ckbCategoria3;
-    private javax.swing.JCheckBox ckbCategoria4;
-    private javax.swing.JCheckBox ckbCategoria5;
+    private javax.swing.JCheckBox ckbCat1;
+    private javax.swing.JCheckBox ckbCat2;
+    private javax.swing.JCheckBox ckbCat3;
+    private javax.swing.JCheckBox ckbCat4;
+    private javax.swing.JCheckBox ckbCat5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblCategoria;
     private javax.swing.JLabel lblDesc;
