@@ -28,10 +28,10 @@ public class MainView extends javax.swing.JFrame {
     /**
      * Creates new form Gerenciamento_Produtos_View
      */
-    private final CategoriaDAO categoriaDao = new CategoriaDAO();
-    private final ProdutoDAO produtoDao = new ProdutoDAO();
-    private final ProdutoCategoriaDAO produtoCategoriaDao = new ProdutoCategoriaDAO();
-    
+    private static CategoriaDAO categoriaDao = new CategoriaDAO();
+    private static ProdutoDAO produtoDao = new ProdutoDAO();
+    private static ProdutoCategoriaDAO produtoCategoriaDao = new ProdutoCategoriaDAO();
+
     public MainView() {
         initComponents();
         setLocationRelativeTo(null);
@@ -88,56 +88,34 @@ public class MainView extends javax.swing.JFrame {
         }
     }
 
-//    public void vincularCategoria(int id) throws SQLException{
-//        ProdutoCategoriaModel p = new ProdutoCategoriaModel();
-//        
-//        p.setIdProduto(id);
-//        
-//        if (ckbCat1.isSelected()){
-//            p.setIdCategoria(1);
-//            produtoCategoriaDao.Inserir(p);
-//        }
-//        
-//        if (ckbCat2.isSelected()){
-//            p.setIdCategoria(2);
-//            produtoCategoriaDao.Inserir(p);
-//        }
-//    }
-    
-//    private Integer[] verificaCategorias() throws SQLException{
-//        
-//        List<CategoriaModel> lista = categoriaDao.Consultar();
-//        Integer[] categorias = new Integer[lista.size()];
+//    private ProdutoCategoriaModel inserirCategorias(int id) {
 //
-//        return categorias;
+//        ProdutoCategoriaModel prodCategorias[] = new ProdutoCategoriaModel[5];
+//
+//
+//
+//        if (ckbCat1.isSelected()) {
+//            prodCategorias[0].setIdCategoria(1);
+//        }
+//
+//        if (ckbCat2.isSelected()) {
+//            prodCategorias[1].setIdCategoria(2);
+//        }
+//
+//        if (ckbCat3.isSelected()) {
+//            prodCategorias[2].setIdCategoria(3);
+//        }
+//
+//        if (ckbCat4.isSelected()) {
+//            prodCategorias[3].setIdCategoria(4);
+//        }
+//
+//        if (ckbCat5.isSelected()) {
+//            prodCategorias[4].setIdCategoria(5);
+//        }
+//
+//        return prodCategorias;
 //    }
-    
-    private ProdutoCategoriaModel[] inserirCategorias(int id){
-        
-        ProdutoCategoriaModel prodCategorias[] = new ProdutoCategoriaModel[5];
-        
-        for(int i = 0; i < prodCategorias.length; i++){
-            prodCategorias[i] = new ProdutoCategoriaModel(id,0);
-        }
-        
-        if(ckbCat1.isSelected())
-            prodCategorias[0].setIdCategoria(1);
-        
-        if(ckbCat2.isSelected())
-            prodCategorias[1].setIdCategoria(2);
-        
-        if(ckbCat3.isSelected())
-            prodCategorias[2].setIdCategoria(3);
-        
-        if(ckbCat4.isSelected())
-            prodCategorias[3].setIdCategoria(4);
-        
-        if(ckbCat5.isSelected())
-            prodCategorias[4].setIdCategoria(5);
-        
-        return prodCategorias;
-    }
-    
     private ProdutoModel inserirDados(ProdutoModel produto) {
 
         if (validarFormulario()) {
@@ -146,12 +124,13 @@ public class MainView extends javax.swing.JFrame {
             produto.setPrecoCompra(Double.parseDouble(txtPrecoCompra.getText()));
             produto.setPrecoVenda(Double.parseDouble(txtPrecoVenda.getText()));
             produto.setQtde(Integer.parseInt(txtQtde.getText()));
-            
+
             boolean botao = true;
-            if (rbdNao.isSelected())
+            if (rbdNao.isSelected()) {
                 botao = false;
+            }
             produto.setDisponibilidade(botao);
-            
+
             Timestamp data = new Timestamp(System.currentTimeMillis());
             produto.setDataCadastro(data);
 
@@ -160,7 +139,7 @@ public class MainView extends javax.swing.JFrame {
             return null;
         }
     }
-    
+
     private ProdutoModel alterarDados(ProdutoModel produto) {
 
         if (validarFormulario()) {
@@ -170,17 +149,18 @@ public class MainView extends javax.swing.JFrame {
             produto.setPrecoVenda(Double.parseDouble(txtPrecoVenda.getText()));
             produto.setQtde(Integer.parseInt(txtQtde.getText()));
             boolean botao = true;
-            if (rbdSim.isSelected())
+            if (rbdSim.isSelected()) {
                 botao = true;
-            if (rbdNao.isSelected())
+            }
+            if (rbdNao.isSelected()) {
                 botao = false;
-            
+            }
+
             produto.setDisponibilidade(botao);
             produto.setId(Integer.parseInt(lblID.getText()));
 
             return produto;
         } else {
-            JOptionPane.showMessageDialog(null, "Campos Obrigatorios não preenchidos");
             return null;
         }
     }
@@ -564,21 +544,21 @@ public class MainView extends javax.swing.JFrame {
             ProdutoModel produto = inserirDados(new ProdutoModel());
             produtoDao.Inserir(produto);
             int id = produtoDao.BuscaId(produto);
-            
-            System.out.println(id);
-            
-            ProdutoCategoriaModel produtoCategorias[] = inserirCategorias(id);
-            
-            for (ProdutoCategoriaModel produtoCategoria : produtoCategorias) {
-                System.out.println("Fora do if "+produtoCategoria.getIdProduto()+" "+produtoCategoria.getIdCategoria());
-                if(produtoCategoria.getIdCategoria() != 0){
-                    System.out.println("Dentro do if "+produtoCategoria.getIdProduto()+" "+produtoCategoria.getIdCategoria());
-                    produtoCategoriaDao.Inserir(produtoCategoria);
-                }
-            }
+
+//            System.out.println(id);
+//
+////            ProdutoCategoriaModel produtoCategorias[] = inserirCategorias(id);
+//
+//            for (ProdutoCategoriaModel produtoCategoria : produtoCategorias) {
+//                System.out.println("Fora do if " + produtoCategoria.getIdProduto() + " " + produtoCategoria.getIdCategoria());
+//                if (produtoCategoria.getIdCategoria() != 0) {
+//                    System.out.println("Dentro do if " + produtoCategoria.getIdProduto() + " " + produtoCategoria.getIdCategoria());
+//                    produtoCategoriaDao.Inserir(produtoCategoria);
+//                }
+//            }
             carregarTabela();
             limpaCampos();
-                
+
         } catch (SQLException ex) {
             carregarTabela();
             limpaCampos();
@@ -648,11 +628,12 @@ public class MainView extends javax.swing.JFrame {
         txtPrecoVenda.setText(tblDados.getValueAt(linha, 4).toString());
         txtQtde.setText(tblDados.getValueAt(linha, 5).toString());
         lblID.setVisible(false);
-        
-        if (tblDados.getValueAt(linha, 6).toString().equals("true"))
+
+        if (tblDados.getValueAt(linha, 6).toString().equals("true")) {
             rbdSim.setSelected(true);
-        else
+        } else {
             rbdNao.setSelected(true);
+        }
 
     }//GEN-LAST:event_tblDadosMouseClicked
 

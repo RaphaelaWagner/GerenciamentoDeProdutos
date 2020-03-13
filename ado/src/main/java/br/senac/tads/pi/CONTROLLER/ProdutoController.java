@@ -17,32 +17,7 @@ import java.sql.Timestamp;
  */
 public class ProdutoController {
 
-    private static ProdutoController INSTANCE;
-    private String erros;
-
-    public static ProdutoController getProdutoController() {
-        if (INSTANCE != null) {
-            return INSTANCE;
-        } else {
-            return INSTANCE = new ProdutoController();
-        }
-    }
-
     static ProdutoDAO daoProdutos = new ProdutoDAO();
-
-    public void inserir(ProdutoModel produto) throws SQLException {
-
-        this.daoProdutos.Inserir(produto);
-
-    }
-
-    public void excluirProdutoController(int ID) throws SQLException {
-        this.daoProdutos.Excluir(ID);
-    }
-
-    public void alterarProdutoController(ProdutoModel produto) throws SQLException {
-        this.daoProdutos.Alterar(produto);
-    }
 
     public static ArrayList<String[]> consultar() {
 

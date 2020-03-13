@@ -7,12 +7,16 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import br.senac.tads.pi.MODEL.ProdutoCategoriaModel;
+import com.sun.org.apache.bcel.internal.generic.RETURN;
 
 /**
  *
  * @author cruiser
  */
 public class ProdutoDAO {
+
+    private ProdutoCategoriaModel pCategoria = new ProdutoCategoriaModel();
 
     //  private final Connection conn;
     public ProdutoDAO() {
@@ -25,7 +29,7 @@ public class ProdutoDAO {
                 + "PRECO_VENDA,QUANTIDADE,DISPONIVEL,DT_CADASTRO)"
                 + "VALUES (?,?,?,?,?,?,?);";
 
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, produto.getNome());
             stmt.setString(2, produto.getDesc());
             stmt.setDouble(3, produto.getPrecoCompra());
@@ -34,6 +38,21 @@ public class ProdutoDAO {
             stmt.setBoolean(6, produto.getDisponibilidade());
             stmt.setTimestamp(7, produto.getDataCadastro());
             stmt.executeUpdate();
+
+            ResultSet rs = stmt.getGeneratedKeys();
+            int id = 0;
+            if (rs.next()) {
+                id = rs.getInt(1);
+            }
+            sql = "INSERT INTO PRODUTO_CATEGORIA(ID_PRODUTO, ID_CATEGORIA) VALUES(?,?);";
+
+            try (PreparedStatement stm = conn.prepareStatement(sql)) {
+
+                stm.setInt(1, id);
+                // stm.setInt(2, );
+
+            }
+
             JOptionPane.showMessageDialog(null, "Adicionado com Sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Erro ao Adicionar" + e, "Erro", JOptionPane.ERROR_MESSAGE);
@@ -44,7 +63,7 @@ public class ProdutoDAO {
 
     public int BuscaId(ProdutoModel produto) throws SQLException {
         Connection conn = ModuloConexao.Conectar();
-        String sql = "SELECT ID FROM PRODUTO WHERE ID = "+produto.getId()+";";
+        String sql = "SELECT ID FROM PRODUTO WHERE ID = " + produto.getId() + ";";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
@@ -59,7 +78,7 @@ public class ProdutoDAO {
         }
     }
 
-public ArrayList<ProdutoModel> Consultar() {
+    public ArrayList<ProdutoModel> Consultar() {
         Connection conn = ModuloConexao.Conectar();
         String sql = "SELECT * FROM PRODUTO;";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
