@@ -6,6 +6,7 @@
 package br.senac.tads.pi.VIEW;
 
 import br.senac.tads.pi.CONTROLLER.ProdutoController;
+import br.senac.tads.pi.DAO.CategoriaDAO;
 import br.senac.tads.pi.MODEL.ProdutoModel;
 import br.senac.tads.pi.MODEL.ProdutoCategoriaModel;
 import br.senac.tads.pi.DAO.ProdutoCategoriaDAO;
@@ -14,6 +15,7 @@ import br.senac.tads.pi.MODEL.CategoriaModel;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -26,6 +28,7 @@ public class MainView extends javax.swing.JFrame {
     /**
      * Creates new form Gerenciamento_Produtos_View
      */
+    private final CategoriaDAO categoriaDao = new CategoriaDAO();
     private final ProdutoDAO produtoDao = new ProdutoDAO();
     private final ProdutoCategoriaDAO produtoCategoriaDao = new ProdutoCategoriaDAO();
     
@@ -85,24 +88,55 @@ public class MainView extends javax.swing.JFrame {
         }
     }
 
+//    public void vincularCategoria(int id) throws SQLException{
+//        ProdutoCategoriaModel p = new ProdutoCategoriaModel();
+//        
+//        p.setIdProduto(id);
+//        
+//        if (ckbCat1.isSelected()){
+//            p.setIdCategoria(1);
+//            produtoCategoriaDao.Inserir(p);
+//        }
+//        
+//        if (ckbCat2.isSelected()){
+//            p.setIdCategoria(2);
+//            produtoCategoriaDao.Inserir(p);
+//        }
+//    }
     
+//    private Integer[] verificaCategorias() throws SQLException{
+//        
+//        List<CategoriaModel> lista = categoriaDao.Consultar();
+//        Integer[] categorias = new Integer[lista.size()];
+//
+//        return categorias;
+//    }
     
-    public void vincularCategoria(int id) throws SQLException{
-        ProdutoCategoriaModel p = new ProdutoCategoriaModel();
+    private ProdutoCategoriaModel[] inserirCategorias(int id){
         
-        p.setIdProduto(id);
+        ProdutoCategoriaModel prodCategorias[] = new ProdutoCategoriaModel[5];
         
-        if (ckbCat1.isSelected()){
-            p.setIdCategoria(1);
-            produtoCategoriaDao.Inserir(p);
+        for(int i = 0; i < prodCategorias.length; i++){
+            prodCategorias[i] = new ProdutoCategoriaModel(id,0);
         }
         
-        if (ckbCat2.isSelected()){
-            p.setIdCategoria(2);
-            produtoCategoriaDao.Inserir(p);
-        }
+        if(ckbCat1.isSelected())
+            prodCategorias[0].setIdCategoria(1);
+        
+        if(ckbCat2.isSelected())
+            prodCategorias[1].setIdCategoria(2);
+        
+        if(ckbCat3.isSelected())
+            prodCategorias[2].setIdCategoria(3);
+        
+        if(ckbCat4.isSelected())
+            prodCategorias[3].setIdCategoria(4);
+        
+        if(ckbCat5.isSelected())
+            prodCategorias[4].setIdCategoria(5);
+        
+        return prodCategorias;
     }
-    
     
     private ProdutoModel inserirDados(ProdutoModel produto) {
 
@@ -487,7 +521,8 @@ public class MainView extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(btnAlterar, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(btnExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(9, 9, 9)))
                 .addContainerGap())
         );
         pnlBackgroundLayout.setVerticalGroup(
@@ -527,12 +562,23 @@ public class MainView extends javax.swing.JFrame {
 //IMPLEMENTANDO SEM CONTROLLER
         try {
             ProdutoModel produto = inserirDados(new ProdutoModel());
-            if (produto != null) {
-                vincularCategoria(produto.getId());
-                produtoDao.Inserir(produto);
-                carregarTabela();
-                limpaCampos();
+            produtoDao.Inserir(produto);
+            int id = produtoDao.BuscaId(produto);
+            
+            System.out.println(id);
+            
+            ProdutoCategoriaModel produtoCategorias[] = inserirCategorias(id);
+            
+            for (ProdutoCategoriaModel produtoCategoria : produtoCategorias) {
+                System.out.println("Fora do if "+produtoCategoria.getIdProduto()+" "+produtoCategoria.getIdCategoria());
+                if(produtoCategoria.getIdCategoria() != 0){
+                    System.out.println("Dentro do if "+produtoCategoria.getIdProduto()+" "+produtoCategoria.getIdCategoria());
+                    produtoCategoriaDao.Inserir(produtoCategoria);
+                }
             }
+            carregarTabela();
+            limpaCampos();
+                
         } catch (SQLException ex) {
             carregarTabela();
             limpaCampos();

@@ -11,7 +11,16 @@ public class ProdutoCategoriaModel {
 
     public ProdutoCategoriaModel() {
     }
+    
+    public ProdutoCategoriaModel(int idProduto) {
+        this.idProduto = idProduto;
+    }
 
+    public ProdutoCategoriaModel(int idProduto, int idCategoria) {
+        this.idProduto = idProduto;
+        this.idCategoria = idCategoria;
+    }
+    
     public int getIdProduto() {
         return idProduto;
     }

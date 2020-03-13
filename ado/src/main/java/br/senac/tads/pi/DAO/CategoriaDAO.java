@@ -4,6 +4,7 @@ import java.sql.*;
 import br.senac.tads.pi.CONNECTION.ModuloConexao;
 import br.senac.tads.pi.MODEL.CategoriaModel;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
 
 /**
@@ -31,11 +32,11 @@ public class CategoriaDAO {
         }
     }
 
-    public ArrayList<CategoriaModel> Consultar() throws SQLException {
+    public List<CategoriaModel> Consultar() throws SQLException {
         String sql = "SELECT * FROM CATEGORIA;";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
-            ArrayList<CategoriaModel> lista = new ArrayList();
+            List<CategoriaModel> lista = new ArrayList();
             while (rs.next()) {
                 CategoriaModel categoria = new CategoriaModel();
                 categoria.setId(rs.getInt("ID"));

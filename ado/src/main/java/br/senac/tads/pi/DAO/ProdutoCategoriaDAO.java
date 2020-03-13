@@ -19,7 +19,7 @@ public class ProdutoCategoriaDAO {
     }
 
     public void Inserir(ProdutoCategoriaModel produtoCategoria) throws SQLException {
-        String sql = "INSERT INTO PRODUTO_CATEGORIA(ID,NOME) VALUES (?,?);";
+        String sql = "INSERT INTO PRODUTO_CATEGORIA(ID_PRODUTO,ID_CATEGORIA) VALUES (?,?);";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, produtoCategoria.getIdProduto());
             stmt.setInt(2, produtoCategoria.getIdCategoria());
@@ -39,8 +39,8 @@ public class ProdutoCategoriaDAO {
             ArrayList<ProdutoCategoriaModel> lista = new ArrayList();
             while (rs.next()) {
                 ProdutoCategoriaModel produtoCategoria = new ProdutoCategoriaModel();
-                produtoCategoria.setIdProduto(rs.getInt("ID"));
-                produtoCategoria.setIdCategoria(rs.getInt("NOME"));
+                produtoCategoria.setIdProduto(rs.getInt("ID_PRODUTO"));
+                produtoCategoria.setIdCategoria(rs.getInt("ID_CATEGORIA"));
                 lista.add(produtoCategoria);
             }
             return lista;
@@ -53,7 +53,7 @@ public class ProdutoCategoriaDAO {
     }
 
     public void Alterar(ProdutoCategoriaModel produtoCategoria) throws SQLException {
-        String sql = "UPDATE CATEGORIA SET NOME = ? WHERE ID = ?;";
+        String sql = "UPDATE CATEGORIA SET ID_CATEGORIA = ? WHERE ID_PRODUTO = ?;";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, produtoCategoria.getIdProduto());
             stmt.setInt(2, produtoCategoria.getIdCategoria());
@@ -67,10 +67,11 @@ public class ProdutoCategoriaDAO {
     }
 
     public void Excluir(ProdutoCategoriaModel produtoCategoria) throws SQLException {
-        String sql = "DELETE FROM PRODUTO_CATEGORIA WHERE ID = ?;";
+        String sql = "DELETE FROM PRODUTO_CATEGORIA WHERE ID_PRODUTO = ? AND ID_CATEGORIA = ?;";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, produtoCategoria.getIdProduto());
+            stmt.setInt(2, produtoCategoria.getIdCategoria());
             stmt.executeUpdate();
             JOptionPane.showMessageDialog(null, "Excluido com Sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException e) {

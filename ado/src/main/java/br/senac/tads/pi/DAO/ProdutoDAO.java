@@ -42,7 +42,24 @@ public class ProdutoDAO {
         }
     }
 
-    public ArrayList<ProdutoModel> Consultar() {
+    public int BuscaId(ProdutoModel produto) throws SQLException {
+        Connection conn = ModuloConexao.Conectar();
+        String sql = "SELECT ID FROM PRODUTO WHERE ID = "+produto.getId()+";";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+            int id = rs.getInt("ID");
+
+            return id;
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Erro ao consultar" + e, "Erro", JOptionPane.ERROR_MESSAGE);
+            return 0;
+        } finally {
+            ModuloConexao.CloseConnection(conn);
+        }
+    }
+
+public ArrayList<ProdutoModel> Consultar() {
         Connection conn = ModuloConexao.Conectar();
         String sql = "SELECT * FROM PRODUTO;";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -62,7 +79,7 @@ public class ProdutoDAO {
             }
             return lista;
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Erro ao Consultar" + e, "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Erro ao consultar" + e, "Erro", JOptionPane.ERROR_MESSAGE);
             return null;
         } finally {
             ModuloConexao.CloseConnection(conn);
