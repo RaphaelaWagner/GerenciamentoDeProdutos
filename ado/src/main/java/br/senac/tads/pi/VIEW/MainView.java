@@ -18,7 +18,7 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author maria.imbeserra
+ * @author cruiser
  */
 public class MainView extends javax.swing.JFrame {
 
@@ -44,6 +44,11 @@ public class MainView extends javax.swing.JFrame {
         this.txtPrecoVenda.setText("");
         this.txtQtde.setText("");
         this.btnGroupDisponibilidade.clearSelection();
+        this.ckbCat1.setSelected(false);
+        this.ckbCat2.setSelected(false);
+        this.ckbCat3.setSelected(false);
+        this.ckbCat4.setSelected(false);
+        this.ckbCat5.setSelected(false);
     }
 
     //Carregar tabela de produtos automaticamente ao abrir software
@@ -570,12 +575,12 @@ public class MainView extends javax.swing.JFrame {
         if (tblDados.getRowCount() > 0) {
 
             int numeroLinha = tblDados.getSelectedRow();
-            //Resgata o Id (oculto) do cliente pelo JTableModel
-            int IDcliente = Integer.parseInt(tblDados.getModel().getValueAt(numeroLinha, 0).toString());
+            //Resgata o Id (oculto) do produto pelo JTableModel
+            int IDproduto = Integer.parseInt(tblDados.getModel().getValueAt(numeroLinha, 0).toString());
             try {
                 ProdutoModel p = (new ProdutoModel());
 
-                produtoDao.Excluir(IDcliente);
+                produtoDao.Excluir(IDproduto);
                 carregarTabela();
                 limpaCampos();
 
@@ -585,7 +590,7 @@ public class MainView extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Erro: " + ex);
             }
         } else {
-            JOptionPane.showMessageDialog(null, "Selecione um item na bela apra excluir: ");
+            JOptionPane.showMessageDialog(null, "Selecione um item na tabela para excluir: ");
         }
     }//GEN-LAST:event_btnExcluirActionPerformed
 

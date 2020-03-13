@@ -3,11 +3,7 @@ package br.senac.tads.pi.CONNECTION;
 import java.sql.*;
 import javax.swing.JOptionPane;
 
-/*
- @see Conectar() - gera conexão ao banco de dados bd_loja_informatica
- @see CloseConnection() - para a conexão e fecha os comandos de suporte ao sql...
 
- */
 public class ModuloConexao {
 
     private static String DRIVER = "com.mysql.cj.jdbc.Driver";
