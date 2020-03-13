@@ -3,6 +3,7 @@ package br.senac.tads.pi.MODEL;
 import java.util.ArrayList;
 
 /**
+ * CLASSE NÃO ESTÁ SENDO USADA
  *
  * @author cruiser
  */
@@ -17,6 +18,14 @@ public class ProdutoCategoriaModel {
 
     public ProdutoCategoriaModel(int idProduto) {
         this.idProduto = idProduto;
+    }
+
+    public ArrayList<Integer> getCategoria() {
+        return Categoria;
+    }
+
+    public void setCategoria(ArrayList<Integer> Categoria) {
+        this.Categoria = Categoria;
     }
 
     public int getIdProduto() {

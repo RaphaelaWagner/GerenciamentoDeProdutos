@@ -6,12 +6,9 @@
 package br.senac.tads.pi.VIEW;
 
 import br.senac.tads.pi.CONTROLLER.ProdutoController;
-import br.senac.tads.pi.DAO.CategoriaDAO;
 import br.senac.tads.pi.MODEL.ProdutoModel;
 import br.senac.tads.pi.MODEL.ProdutoCategoriaModel;
-import br.senac.tads.pi.DAO.ProdutoCategoriaDAO;
 import br.senac.tads.pi.DAO.ProdutoDAO;
-import br.senac.tads.pi.MODEL.CategoriaModel;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -28,9 +25,7 @@ public class MainView extends javax.swing.JFrame {
     /**
      * Creates new form Gerenciamento_Produtos_View
      */
-    private static CategoriaDAO categoriaDao = new CategoriaDAO();
     private static ProdutoDAO produtoDao = new ProdutoDAO();
-    private static ProdutoCategoriaDAO produtoCategoriaDao = new ProdutoCategoriaDAO();
 
     public MainView() {
         initComponents();
@@ -88,34 +83,14 @@ public class MainView extends javax.swing.JFrame {
         }
     }
 
-//    private ProdutoCategoriaModel inserirCategorias(int id) {
-//
-//        ProdutoCategoriaModel prodCategorias[] = new ProdutoCategoriaModel[5];
-//
-//
-//
-//        if (ckbCat1.isSelected()) {
-//            prodCategorias[0].setIdCategoria(1);
-//        }
-//
-//        if (ckbCat2.isSelected()) {
-//            prodCategorias[1].setIdCategoria(2);
-//        }
-//
-//        if (ckbCat3.isSelected()) {
-//            prodCategorias[2].setIdCategoria(3);
-//        }
-//
-//        if (ckbCat4.isSelected()) {
-//            prodCategorias[3].setIdCategoria(4);
-//        }
-//
-//        if (ckbCat5.isSelected()) {
-//            prodCategorias[4].setIdCategoria(5);
-//        }
-//
-//        return prodCategorias;
-//    }
+    private ProdutoCategoriaModel inserirCategorias(ProdutoCategoriaModel p) {
+
+        ProdutoCategoriaModel prodCategorias = new ProdutoCategoriaModel();
+
+        return prodCategorias;
+
+    }
+
     private ProdutoModel inserirDados(ProdutoModel produto) {
 
         if (validarFormulario()) {
@@ -133,6 +108,26 @@ public class MainView extends javax.swing.JFrame {
 
             Timestamp data = new Timestamp(System.currentTimeMillis());
             produto.setDataCadastro(data);
+
+            if (ckbCat1.isSelected()) {
+                produto.addCategoria(1);
+            }
+
+            if (ckbCat2.isSelected()) {
+                produto.addCategoria(2);
+            }
+
+            if (ckbCat3.isSelected()) {
+                produto.addCategoria(3);
+            }
+
+            if (ckbCat4.isSelected()) {
+                produto.addCategoria(4);
+            }
+
+            if (ckbCat5.isSelected()) {
+                produto.addCategoria(5);
+            }
 
             return produto;
         } else {
@@ -539,23 +534,9 @@ public class MainView extends javax.swing.JFrame {
 
     private void btnNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovoActionPerformed
 
-//IMPLEMENTANDO SEM CONTROLLER
         try {
             ProdutoModel produto = inserirDados(new ProdutoModel());
             produtoDao.Inserir(produto);
-            int id = produtoDao.BuscaId(produto);
-
-//            System.out.println(id);
-//
-////            ProdutoCategoriaModel produtoCategorias[] = inserirCategorias(id);
-//
-//            for (ProdutoCategoriaModel produtoCategoria : produtoCategorias) {
-//                System.out.println("Fora do if " + produtoCategoria.getIdProduto() + " " + produtoCategoria.getIdCategoria());
-//                if (produtoCategoria.getIdCategoria() != 0) {
-//                    System.out.println("Dentro do if " + produtoCategoria.getIdProduto() + " " + produtoCategoria.getIdCategoria());
-//                    produtoCategoriaDao.Inserir(produtoCategoria);
-//                }
-//            }
             carregarTabela();
             limpaCampos();
 

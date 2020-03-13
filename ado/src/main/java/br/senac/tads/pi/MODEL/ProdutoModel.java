@@ -1,6 +1,7 @@
 package br.senac.tads.pi.MODEL;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 
 /**
  *
@@ -16,20 +17,9 @@ public class ProdutoModel {
     private int qtde;
     private boolean disponibilidade;
     private Timestamp dataCadastro;
+    private ArrayList<Integer> categoria = new ArrayList<>();
 
     public ProdutoModel() {
-    }
-
-    public ProdutoModel(String nome, String desc, double precoCompra, double precoVenda, int qtde, boolean disponibilidade, Timestamp dataCadastro) {
-
-        this.nome = nome;
-        this.desc = desc;
-        this.precoCompra = precoCompra;
-        this.precoVenda = precoVenda;
-        this.qtde = qtde;
-        this.disponibilidade = disponibilidade;
-        this.dataCadastro = dataCadastro;
-
     }
 
     public int getId() {
@@ -95,4 +85,22 @@ public class ProdutoModel {
     public void setDataCadastro(Timestamp dataCadastro) {
         this.dataCadastro = dataCadastro;
     }
+
+    public ArrayList<Integer> getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(ArrayList<Integer> Categoria) {
+        this.categoria = Categoria;
+    }
+
+    public ArrayList<Integer> getcategoria() {
+        return categoria;
+    }
+
+    public void addCategoria(int categoria) {
+        this.categoria.add(categoria);
+
+    }
+
 }

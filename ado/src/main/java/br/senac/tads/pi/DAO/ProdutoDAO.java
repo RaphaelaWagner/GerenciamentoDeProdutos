@@ -48,31 +48,16 @@ public class ProdutoDAO {
 
             try (PreparedStatement stm = conn.prepareStatement(sql)) {
 
-                stm.setInt(1, id);
-                // stm.setInt(2, );
-
+                for (int i = 0; i < produto.getCategoria().size(); i++) {
+                    stm.setInt(1, id);
+                    stm.setInt(2, produto.getCategoria().get(i));
+                    stm.executeUpdate();
+                }
             }
 
             JOptionPane.showMessageDialog(null, "Adicionado com Sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Erro ao Adicionar" + e, "Erro", JOptionPane.ERROR_MESSAGE);
-        } finally {
-            ModuloConexao.CloseConnection(conn);
-        }
-    }
-
-    public int BuscaId(ProdutoModel produto) throws SQLException {
-        Connection conn = ModuloConexao.Conectar();
-        String sql = "SELECT ID FROM PRODUTO WHERE ID = " + produto.getId() + ";";
-
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            ResultSet rs = stmt.executeQuery();
-            int id = rs.getInt("ID");
-
-            return id;
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Erro ao consultar" + e, "Erro", JOptionPane.ERROR_MESSAGE);
-            return 0;
         } finally {
             ModuloConexao.CloseConnection(conn);
         }
